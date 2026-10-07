@@ -10,7 +10,7 @@ import unittest
 from anki.collection import Collection
 
 # sizes.py импортируем напрямую, минуя __init__.py (тот требует GUI Anki).
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "src", "deck_list_tweaks"))
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "src", "deck_size_column"))
 import sizes  # noqa: E402
 
 

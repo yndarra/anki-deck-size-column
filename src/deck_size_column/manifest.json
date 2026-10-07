@@ -1,0 +1,7 @@
+{
+    "package": "deck_size_column",
+    "name": "Deck Size Column",
+    "homepage": "https://github.com/yndarra/anki-deck-size-column",
+    "conflicts": [],
+    "min_point_version": 231000
+}

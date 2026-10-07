@@ -1,7 +1,7 @@
-"""Собирает dist/deck_list_tweaks.ankiaddon — файл для AnkiWeb и «Install from file».
+"""Собирает dist/deck_size_column.ankiaddon — файл для AnkiWeb и «Install from file».
 
 .ankiaddon — это обычный zip, где файлы дополнения лежат в корне архива
-(без папки deck_list_tweaks/). Служебное (__pycache__, meta.json с
+(без папки deck_size_column/). Служебное (__pycache__, meta.json с
 личными настройками) в архив не попадает.
 """
 
@@ -11,8 +11,8 @@ import zipfile
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent
-SRC = ROOT / "src" / "deck_list_tweaks"
-OUT = ROOT / "dist" / "deck_list_tweaks.ankiaddon"
+SRC = ROOT / "src" / "deck_size_column"
+OUT = ROOT / "dist" / "deck_size_column.ankiaddon"
 SKIP_DIRS = {"__pycache__"}
 SKIP_FILES = {"meta.json"}
 
