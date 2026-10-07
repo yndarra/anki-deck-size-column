@@ -1,0 +1,7 @@
+{
+    "package": "deck_list_tweaks",
+    "name": "Deck List Tweaks: Size Column, Short Headers, Wrapped Names",
+    "homepage": "https://github.com/yndarra/anki-deck-list-tweaks",
+    "conflicts": [],
+    "min_point_version": 231000
+}
