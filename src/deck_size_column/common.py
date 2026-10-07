@@ -2,14 +2,28 @@
 
 from __future__ import annotations
 
+import json
+
 import anki.lang
 from aqt import mw
 
 # Имя папки дополнения — по нему Anki хранит настройки.
 ADDON = __name__.split(".")[0]
 
+# Цветовые уровни — как в Note Size: «до какого размера» и цвет плашки для
+# светлой и тёмной темы. У последнего уровня max_size пустой — «и больше».
+# Пороги крупнее, чем у Note Size (там 100 KB / 1 MB для одной записи),
+# потому что колода — это сотни и тысячи записей.
+DEFAULT_LEVELS = [
+    {"max_size": "10 MB", "light_color": "PaleGreen", "dark_color": "DarkGreen"},
+    {"max_size": "100 MB", "light_color": "Orange", "dark_color": "SaddleBrown"},
+    {"max_size": "", "light_color": "LightCoral", "dark_color": "Maroon"},
+]
+
 DEFAULTS: dict[str, object] = {
     "header": "",  # пусто — «Размер» / «Size» по языку Anki
+    "colors_enabled": True,
+    "levels": DEFAULT_LEVELS,
 }
 
 _TEXTS = {
@@ -21,6 +35,14 @@ _TEXTS = {
         "hint": "Размер = текст записей + медиафайлы, с подколодами. "
         "Файл, нужный нескольким записям, считается один раз.",
         "defaults": "По умолчанию",
+        "colors": "Цвет плашки по размеру (как в Note Size)",
+        "col_max": "До размера",
+        "col_light": "Светлая тема",
+        "col_dark": "Тёмная тема",
+        "and_more": "и больше",
+        "add": "Добавить уровень",
+        "remove": "Удалить уровень",
+        "levels_hint": "Щёлкни по цвету, чтобы выбрать другой. Размер: 500 KB, 10 MB, 1 GB.",
     },
     "en": {
         "size": "Size",
@@ -30,6 +52,14 @@ _TEXTS = {
         "hint": "Size = note text + media files, including subdecks. "
         "A file used by several notes is counted once.",
         "defaults": "Defaults",
+        "colors": "Badge color by size (like Note Size)",
+        "col_max": "Up to",
+        "col_light": "Light theme",
+        "col_dark": "Dark theme",
+        "and_more": "and more",
+        "add": "Add level",
+        "remove": "Remove level",
+        "levels_hint": "Click a color to change it. Sizes: 500 KB, 10 MB, 1 GB.",
     },
 }
 
@@ -45,7 +75,8 @@ def t(text_id: str, /, **kwargs: object) -> str:
 
 def get_config() -> dict:
     stored = mw.addonManager.getConfig(ADDON) or {}
-    return {key: stored.get(key, default) for key, default in DEFAULTS.items()}
+    # json-копия — чтобы правки в окне настроек не меняли DEFAULTS.
+    return json.loads(json.dumps({key: stored.get(key, default) for key, default in DEFAULTS.items()}))
 
 
 def save_config(cfg: dict) -> None:

@@ -127,8 +127,8 @@ def compute_deck_sizes(col: Collection) -> dict[int, DeckSize]:
     return result
 
 
-def format_size(num: int, russian: bool) -> str:
-    """1536 → «1,5 КБ» / «1.5 KB». Дробная часть только у небольших чисел."""
+def size_parts(num: int, russian: bool) -> tuple[str, str]:
+    """1536 → («1,5», «КБ»). Дробная часть только у чисел меньше 100."""
     units = ["Б", "КБ", "МБ", "ГБ"] if russian else ["B", "KB", "MB", "GB"]
     value = float(num)
     unit = 0
@@ -138,4 +138,22 @@ def format_size(num: int, russian: bool) -> str:
     text = f"{value:.0f}" if unit == 0 or value >= 100 else f"{value:.1f}"
     if russian:
         text = text.replace(".", ",")
-    return f"{text} {units[unit]}"
+    return text, units[unit]
+
+
+def format_size(num: int, russian: bool) -> str:
+    """1536 → «1,5 КБ» / «1.5 KB»."""
+    return " ".join(size_parts(num, russian))
+
+
+_UNIT_BYTES = {"B": 1, "KB": 1024, "MB": 1024**2, "GB": 1024**3, "TB": 1024**4}
+_PARSE_RE = re.compile(r"^\s*(\d+(?:[.,]\d+)?)\s*([KMGT]?B)\s*$", re.IGNORECASE)
+
+
+def parse_size(text: str) -> int | None:
+    """«10 MB» / «1,5 gb» → байты; пустая строка или ошибка → None (без верхней границы)."""
+    match = _PARSE_RE.match(text or "")
+    if not match:
+        return None
+    number = float(match.group(1).replace(",", "."))
+    return int(number * _UNIT_BYTES[match.group(2).upper()])

@@ -1,3 +1,21 @@
 {
-    "header": ""
+    "header": "",
+    "colors_enabled": true,
+    "levels": [
+        {
+            "max_size": "10 MB",
+            "light_color": "PaleGreen",
+            "dark_color": "DarkGreen"
+        },
+        {
+            "max_size": "100 MB",
+            "light_color": "Orange",
+            "dark_color": "SaddleBrown"
+        },
+        {
+            "max_size": "",
+            "light_color": "LightCoral",
+            "dark_color": "Maroon"
+        }
+    ]
 }

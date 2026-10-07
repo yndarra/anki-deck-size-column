@@ -30,6 +30,14 @@ class MediaRefsTest(unittest.TestCase):
         self.assertEqual(sizes.format_size(512, True), "512 Б")
         self.assertEqual(sizes.format_size(1536, True), "1,5 КБ")
         self.assertEqual(sizes.format_size(150 * 1024 * 1024, False), "150 MB")
+        self.assertEqual(sizes.size_parts(9_400 * 1024 * 1024, False), ("9.2", "GB"))
+
+    def test_parse(self) -> None:
+        self.assertEqual(sizes.parse_size("10 MB"), 10 * 1024 * 1024)
+        self.assertEqual(sizes.parse_size("1,5gb"), int(1.5 * 1024**3))
+        self.assertEqual(sizes.parse_size("500 KB"), 500 * 1024)
+        self.assertIsNone(sizes.parse_size(""))
+        self.assertIsNone(sizes.parse_size("abc"))
 
 
 class DeckSizesTest(unittest.TestCase):

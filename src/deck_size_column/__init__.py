@@ -32,15 +32,20 @@ from .settings import SettingsDialog
 
 _JS_PATH = os.path.join(os.path.dirname(__file__), "deck_size.js")
 
-# Кеш: «отпечаток» коллекции → {deck_id: [текст, подсказка, байты]}
+# Кеш: «отпечаток» коллекции → {deck_id: [число, единица, подсказка, байты]}
 _cache: dict[str, Any] = {"key": None, "cells": {}, "lang": None}
 _computing = False
 
+# Оформление как в Note Size: плашка, число и единица моноширинным шрифтом.
 _CSS = (
     "<style>"
-    "td.dsc-size { color: var(--fg-subtle); white-space: nowrap; }"
+    "td.dsc-size { white-space: nowrap; }"
+    ".dsc-badge { display: inline-block; padding: 0 6px; border-radius: 4px;"
+    " font-family: Consolas, monospace; color: var(--fg); }"
+    ".dsc-badge.dsc-plain { color: var(--fg-subtle); padding: 0; }"
     # Бледнеет только текст: opacity задела бы и линию-разделитель под ячейкой.
-    "td.dsc-size.dsc-empty { color: color-mix(in srgb, var(--fg-subtle) 45%, transparent); }"
+    ".dsc-badge.dsc-empty { color: color-mix(in srgb, var(--fg-subtle) 45%, transparent); }"
+    ".dsc-wait { color: var(--fg-subtle); }"
     "</style>"
 )
 
@@ -73,7 +78,8 @@ def _cells(result: dict[int, sizes.DeckSize]) -> dict[str, list]:
             files=size.media_files,
             notes=size.notes,
         )
-        cells[str(did)] = [sizes.format_size(size.total, ru), tip, size.total]
+        number, unit = sizes.size_parts(size.total, ru)
+        cells[str(did)] = [number, unit, tip, size.total]
     return cells
 
 
@@ -111,8 +117,23 @@ def _start_refresh() -> None:
     QueryOp(parent=mw, op=op, success=done).failure(failed).run_in_background()
 
 
+def _js_levels(cfg: dict) -> list[dict]:
+    """Уровни для скрипта: размеры в байтах (None — «и больше»)."""
+    if not cfg["colors_enabled"]:
+        return []
+    return [
+        {
+            "max": sizes.parse_size(str(level.get("max_size") or "")),
+            "light": str(level.get("light_color") or ""),
+            "dark": str(level.get("dark_color") or ""),
+        }
+        for level in cfg["levels"]
+    ]
+
+
 def on_will_render(deck_browser: DeckBrowser, content: DeckBrowserContent) -> None:
-    header = get_config()["header"] or t("size")
+    cfg = get_config()
+    header = cfg["header"] or t("size")
     with open(_JS_PATH, encoding="utf-8") as f:
         script = f.read()
     # Вставляем после таблицы (в блок статистики), а не внутрь <table>.
@@ -120,6 +141,7 @@ def on_will_render(deck_browser: DeckBrowser, content: DeckBrowserContent) -> No
         _CSS
         + "<script>"
         + f"window.DSC_HEADER = {json.dumps(header)};"
+        + f"window.DSC_LEVELS = {json.dumps(_js_levels(cfg))};"
         + f"window.DSC_SIZES = {json.dumps(_cache['cells'])};"
         + script
         + "</script>"
