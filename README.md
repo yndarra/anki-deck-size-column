@@ -1,5 +1,8 @@
 # Deck Size Column
 
+**Install:** in Anki go to Tools → Add-ons → Get Add-ons… and enter the code **`810671385`** ([AnkiWeb page](https://ankiweb.net/shared/info/810671385)).
+**Установка:** Инструменты → Дополнения → Скачать дополнения… → код **`810671385`**.
+
 An Anki add-on that adds a **Size** column to the deck list on the main screen, after New / Learn / Due.
 
 - Size = note text + media files used by those notes, **including subdecks** (like the New / Learn / Due counts).
