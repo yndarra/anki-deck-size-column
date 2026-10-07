@@ -10,20 +10,25 @@ from aqt import mw
 # Имя папки дополнения — по нему Anki хранит настройки.
 ADDON = __name__.split(".")[0]
 
-# Цветовые уровни — как в Note Size: «до какого размера» и цвет плашки для
-# светлой и тёмной темы. У последнего уровня max_size пустой — «и больше».
+# Цветовые точки: «с какого размера» и цвет плашки для светлой и тёмной темы.
+# В режиме градиента цвет между соседними точками меняется плавно (по
+# логарифмической шкале — размеры колод отличаются в сотни раз), выше
+# последней точки — её цвет. Без градиента — ступеньками, как в Note Size.
 # Пороги крупнее, чем у Note Size (там 100 KB / 1 MB для одной записи),
 # потому что колода — это сотни и тысячи записей.
-DEFAULT_LEVELS = [
-    {"max_size": "10 MB", "light_color": "PaleGreen", "dark_color": "DarkGreen"},
-    {"max_size": "100 MB", "light_color": "Orange", "dark_color": "SaddleBrown"},
-    {"max_size": "", "light_color": "LightCoral", "dark_color": "Maroon"},
+DEFAULT_STOPS = [
+    {"size": "0 B", "light_color": "PaleGreen", "dark_color": "DarkGreen"},
+    {"size": "10 MB", "light_color": "PaleGreen", "dark_color": "DarkGreen"},
+    {"size": "100 MB", "light_color": "Orange", "dark_color": "#B45309"},
+    {"size": "1 GB", "light_color": "#F44336", "dark_color": "#B91C1C"},
+    {"size": "2 GB", "light_color": "#000000", "dark_color": "#000000"},
 ]
 
 DEFAULTS: dict[str, object] = {
     "header": "",  # пусто — «Размер» / «Size» по языку Anki
     "colors_enabled": True,
-    "levels": DEFAULT_LEVELS,
+    "gradient": True,
+    "stops": DEFAULT_STOPS,
 }
 
 _TEXTS = {
@@ -36,13 +41,14 @@ _TEXTS = {
         "Файл, нужный нескольким записям, считается один раз.",
         "defaults": "По умолчанию",
         "colors": "Цвет плашки по размеру (как в Note Size)",
-        "col_max": "До размера",
+        "gradient": "Плавный переход цвета между точками (градиент)",
+        "col_max": "С размера",
         "col_light": "Светлая тема",
         "col_dark": "Тёмная тема",
-        "and_more": "и больше",
-        "add": "Добавить уровень",
-        "remove": "Удалить уровень",
-        "levels_hint": "Щёлкни по цвету, чтобы выбрать другой. Размер: 500 KB, 10 MB, 1 GB.",
+        "add": "Добавить точку",
+        "remove": "Удалить точку",
+        "levels_hint": "Щёлкни по цвету, чтобы выбрать другой. Размер: 0 B, 500 KB, 10 MB, 1 GB. "
+        "С градиентом цвет плавно перетекает от точки к точке, без — меняется ступенькой.",
     },
     "en": {
         "size": "Size",
@@ -53,13 +59,14 @@ _TEXTS = {
         "A file used by several notes is counted once.",
         "defaults": "Defaults",
         "colors": "Badge color by size (like Note Size)",
-        "col_max": "Up to",
+        "gradient": "Smooth color transition between points (gradient)",
+        "col_max": "From size",
         "col_light": "Light theme",
         "col_dark": "Dark theme",
-        "and_more": "and more",
-        "add": "Add level",
-        "remove": "Remove level",
-        "levels_hint": "Click a color to change it. Sizes: 500 KB, 10 MB, 1 GB.",
+        "add": "Add point",
+        "remove": "Remove point",
+        "levels_hint": "Click a color to change it. Sizes: 0 B, 500 KB, 10 MB, 1 GB. "
+        "With the gradient the color blends smoothly between points, without it — in steps.",
     },
 }
 

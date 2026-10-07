@@ -1,21 +1,32 @@
 {
     "header": "",
     "colors_enabled": true,
-    "levels": [
+    "gradient": true,
+    "stops": [
         {
-            "max_size": "10 MB",
+            "size": "0 B",
             "light_color": "PaleGreen",
             "dark_color": "DarkGreen"
         },
         {
-            "max_size": "100 MB",
-            "light_color": "Orange",
-            "dark_color": "SaddleBrown"
+            "size": "10 MB",
+            "light_color": "PaleGreen",
+            "dark_color": "DarkGreen"
         },
         {
-            "max_size": "",
-            "light_color": "LightCoral",
-            "dark_color": "Maroon"
+            "size": "100 MB",
+            "light_color": "Orange",
+            "dark_color": "#B45309"
+        },
+        {
+            "size": "1 GB",
+            "light_color": "#F44336",
+            "dark_color": "#B91C1C"
+        },
+        {
+            "size": "2 GB",
+            "light_color": "#000000",
+            "dark_color": "#000000"
         }
     ]
 }

@@ -42,6 +42,8 @@ _CSS = (
     "td.dsc-size { white-space: nowrap; }"
     ".dsc-badge { display: inline-block; padding: 0 6px; border-radius: 4px;"
     " font-family: Consolas, monospace; color: var(--fg); }"
+    # Почти чёрная плашка на тёмном фоне — тонкая рамка, чтобы её было видно.
+    ".dsc-badge.dsc-dark-bg { box-shadow: inset 0 0 0 1px rgba(255,255,255,.18); }"
     ".dsc-badge.dsc-plain { color: var(--fg-subtle); padding: 0; }"
     # Бледнеет только текст: opacity задела бы и линию-разделитель под ячейкой.
     ".dsc-badge.dsc-empty { color: color-mix(in srgb, var(--fg-subtle) 45%, transparent); }"
@@ -117,18 +119,21 @@ def _start_refresh() -> None:
     QueryOp(parent=mw, op=op, success=done).failure(failed).run_in_background()
 
 
-def _js_levels(cfg: dict) -> list[dict]:
-    """Уровни для скрипта: размеры в байтах (None — «и больше»)."""
+def _js_stops(cfg: dict) -> list[dict]:
+    """Цветовые точки для скрипта: размер в байтах, по возрастанию."""
     if not cfg["colors_enabled"]:
         return []
-    return [
-        {
-            "max": sizes.parse_size(str(level.get("max_size") or "")),
-            "light": str(level.get("light_color") or ""),
-            "dark": str(level.get("dark_color") or ""),
-        }
-        for level in cfg["levels"]
-    ]
+    stops = []
+    for stop in cfg["stops"]:
+        size = sizes.parse_size(str(stop.get("size") or ""))
+        if size is None:
+            continue
+        stops.append({
+            "size": size,
+            "light": str(stop.get("light_color") or ""),
+            "dark": str(stop.get("dark_color") or ""),
+        })
+    return sorted(stops, key=lambda s: s["size"])
 
 
 def on_will_render(deck_browser: DeckBrowser, content: DeckBrowserContent) -> None:
@@ -141,7 +146,8 @@ def on_will_render(deck_browser: DeckBrowser, content: DeckBrowserContent) -> No
         _CSS
         + "<script>"
         + f"window.DSC_HEADER = {json.dumps(header)};"
-        + f"window.DSC_LEVELS = {json.dumps(_js_levels(cfg))};"
+        + f"window.DSC_STOPS = {json.dumps(_js_stops(cfg))};"
+        + f"window.DSC_GRADIENT = {json.dumps(bool(cfg['gradient']))};"
         + f"window.DSC_SIZES = {json.dumps(_cache['cells'])};"
         + script
         + "</script>"

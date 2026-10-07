@@ -1,7 +1,8 @@
 // Deck Size Column — столбец «Размер» в списке колод на главном экране.
 // Подставляется в страницу при каждой отрисовке списка; перед ним Python задаёт
 //   window.DSC_HEADER — заголовок столбца;
-//   window.DSC_LEVELS — цветовые уровни [{max: байты|null, light, dark}] или [];
+//   window.DSC_STOPS — цветовые точки [{size: байты, light, dark}] по возрастанию или [];
+//   window.DSC_GRADIENT — true: цвет плавно перетекает между точками, false: ступеньками;
 //   window.DSC_SIZES  — {deck_id: [число, единица, подсказка, байты]}.
 //
 // Оформление как в Note Size: цветная плашка по размеру, число и единица
@@ -36,19 +37,52 @@
         });
     }
 
-    // Цвет плашки для размера: первый уровень, чей max больше размера.
-    function colorFor(bytes) {
-        const levels = window.DSC_LEVELS || [];
-        // Anki помечает тёмную тему и на <html> (night-mode), и на <body> (nightMode).
-        const dark =
-            document.documentElement.classList.contains("night-mode") ||
-            document.body.classList.contains("nightMode");
-        for (const level of levels) {
-            if (level.max === null || bytes < level.max) {
-                return dark ? level.dark : level.light;
-            }
+    // Любой CSS-цвет (имя, #hex, rgb()) → [r, g, b] через вычисленный стиль.
+    const rgbCache = {};
+    function toRgb(color) {
+        if (!(color in rgbCache)) {
+            const probe = document.createElement("span");
+            probe.style.color = color;
+            document.body.appendChild(probe);
+            const m = getComputedStyle(probe).color.match(/\d+(\.\d+)?/g) || [0, 0, 0];
+            probe.remove();
+            rgbCache[color] = m.slice(0, 3).map(Number);
         }
-        return "";
+        return rgbCache[color];
+    }
+
+    function isDarkTheme() {
+        // Anki помечает тёмную тему и на <html> (night-mode), и на <body> (nightMode).
+        return (
+            document.documentElement.classList.contains("night-mode") ||
+            document.body.classList.contains("nightMode")
+        );
+    }
+
+    // Цвет плашки для размера → [r, g, b] или null (цвета выключены).
+    function colorFor(bytes) {
+        const stops = window.DSC_STOPS || [];
+        if (!stops.length) return null;
+        const key = isDarkTheme() ? "dark" : "light";
+        if (bytes <= stops[0].size) return toRgb(stops[0][key]);
+        for (let i = 0; i < stops.length - 1; i++) {
+            const a = stops[i], b = stops[i + 1];
+            if (bytes >= b.size) continue;
+            if (!window.DSC_GRADIENT) return toRgb(a[key]); // ступенька
+            // Доля пути между точками — по логарифму размера: так 100 МБ и
+            // 900 МБ различаются так же заметно, как 1 МБ и 9 МБ.
+            const lo = Math.log(Math.max(a.size, 1)), hi = Math.log(b.size);
+            const t = hi > lo ? (Math.log(Math.max(bytes, 1)) - lo) / (hi - lo) : 1;
+            const ca = toRgb(a[key]), cb = toRgb(b[key]);
+            return ca.map((v, j) => Math.round(v + (cb[j] - v) * Math.min(Math.max(t, 0), 1)));
+        }
+        return toRgb(stops[stops.length - 1][key]); // выше последней точки
+    }
+
+    // Яркость фона → тёмный или светлый текст, чтобы цифры читались на любой плашке.
+    function isDark(rgb) {
+        const [r, g, b] = rgb;
+        return 0.299 * r + 0.587 * g + 0.114 * b < 140;
     }
 
     function span(cls, text) {
@@ -77,9 +111,15 @@
             badge.appendChild(span("dsc-num", number));
             badge.appendChild(document.createTextNode(" "));
             badge.appendChild(span("dsc-unit", unit));
-            const color = bytes > 0 ? colorFor(bytes) : "";
-            if (color) badge.style.backgroundColor = color;
-            else badge.classList.add("dsc-plain");
+            const rgb = bytes > 0 ? colorFor(bytes) : null;
+            if (rgb) {
+                badge.style.backgroundColor = `rgb(${rgb.join(",")})`;
+                const darkBg = isDark(rgb);
+                badge.style.color = darkBg ? "#f2f2f2" : "#1a1a1a";
+                badge.classList.toggle("dsc-dark-bg", darkBg);
+            } else {
+                badge.classList.add("dsc-plain");
+            }
             if (bytes === 0) badge.classList.add("dsc-empty");
             td.appendChild(badge);
         });
