@@ -5,7 +5,7 @@
 <li>Hover a cell to see text, media, number of files and notes separately.</li>
 <li>A media file used by several notes is counted once per deck.</li>
 <li>Calculated in the background (≈0.5 s for 50k notes / 1,000 decks) and cached. It is recalculated only when notes, cards, decks or the media folder change.</li>
-<li>Styled like Note Size: a colored badge whose color changes <b>smoothly</b> with size (log scale). Default: green up to 10 MB → orange by 100 MB → red by 1 GB → black by 2 GB. Light and dark themes have separate colors, and the text color adapts to the badge.</li>
+<li>Styled like Note Size: a colored badge whose color changes <b>smoothly</b> with size (log scale). Default: grey for tiny decks (≤100 KB) → green by 10 MB → yellow by 30 MB → orange by 100 MB → red by 1 GB → black by 2 GB. Light and dark themes have separate colors, and the text color adapts to the badge.</li>
 <li>Settings window (Config button): the column header, color points (size + colors, add/remove, click to pick a color) and gradient vs. steps. Russian and English interface.</li>
 </ul>
 

@@ -5,18 +5,28 @@
     "stops": [
         {
             "size": "0 B",
-            "light_color": "PaleGreen",
-            "dark_color": "DarkGreen"
+            "light_color": "#D4D4D4",
+            "dark_color": "#4A4A4A"
+        },
+        {
+            "size": "100 KB",
+            "light_color": "#D4D4D4",
+            "dark_color": "#4A4A4A"
         },
         {
             "size": "10 MB",
-            "light_color": "PaleGreen",
-            "dark_color": "DarkGreen"
+            "light_color": "#90EE90",
+            "dark_color": "#15803D"
+        },
+        {
+            "size": "30 MB",
+            "light_color": "#FFE45C",
+            "dark_color": "#A18800"
         },
         {
             "size": "100 MB",
-            "light_color": "Orange",
-            "dark_color": "#B45309"
+            "light_color": "#FFA500",
+            "dark_color": "#C2410C"
         },
         {
             "size": "1 GB",
