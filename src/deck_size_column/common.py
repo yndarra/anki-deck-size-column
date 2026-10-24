@@ -17,7 +17,7 @@ ADDON = __name__.split(".")[0]
 # Пороги крупнее, чем у Note Size (там 100 KB / 1 MB для одной записи),
 # потому что колода — это сотни и тысячи записей.
 # По умолчанию: серый (совсем маленькие колоды, до 100 KB) → зелёный к 10 MB →
-# жёлтый к 30 MB → оранжевый к 100 MB → красный к 1 GB → чёрный к 2 GB и дальше.
+# жёлтый к 30 MB → оранжевый к 100 MB → красный к 1 GB → фиолетовый к 2 GB и дальше.
 DEFAULT_STOPS = [
     {"size": "0 B", "light_color": "#D4D4D4", "dark_color": "#4A4A4A"},
     {"size": "100 KB", "light_color": "#D4D4D4", "dark_color": "#4A4A4A"},
@@ -25,7 +25,7 @@ DEFAULT_STOPS = [
     {"size": "30 MB", "light_color": "#FFE45C", "dark_color": "#A18800"},
     {"size": "100 MB", "light_color": "#FFA500", "dark_color": "#C2410C"},
     {"size": "1 GB", "light_color": "#F44336", "dark_color": "#B91C1C"},
-    {"size": "2 GB", "light_color": "#000000", "dark_color": "#000000"},
+    {"size": "2 GB", "light_color": "#9C27B0", "dark_color": "#7E22CE"},
 ]
 
 DEFAULTS: dict[str, object] = {

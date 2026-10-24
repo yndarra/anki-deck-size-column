@@ -35,8 +35,8 @@
         },
         {
             "size": "2 GB",
-            "light_color": "#000000",
-            "dark_color": "#000000"
+            "light_color": "#9C27B0",
+            "dark_color": "#7E22CE"
         }
     ]
 }
