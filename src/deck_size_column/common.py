@@ -25,7 +25,7 @@ DEFAULT_STOPS = [
     {"size": "30 MB", "light_color": "#FFE45C", "dark_color": "#A18800"},
     {"size": "100 MB", "light_color": "#FFA500", "dark_color": "#C2410C"},
     {"size": "1 GB", "light_color": "#F44336", "dark_color": "#B91C1C"},
-    {"size": "10 GB", "light_color": "#CE93D8", "dark_color": "#A855F7"},
+    {"size": "10 GB", "light_color": "#B55DC4", "dark_color": "#933CE3"},
 ]
 
 DEFAULTS: dict[str, object] = {
